@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Bao Tran | Terminal</title>
+<style type="text/css">
+body {
+	background-color:#191919;
+}
+table {
+	position:relative;
+	left:30px;
+	top: 0px;
+	background-color: #073642;	
+	border-top: 25px solid #DCDCDC;
+	border-radius: 15px;
+	table-layout:fixed;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	box-shadow:3px 5px 20px 0px black;
+	-webkit-box-shadow:3px 5px 20px 0px black;
+	-moz-box-shadow:3px 5px 20px 0px black;
+}
+
+textarea{
+	color:#93a1a1;
+	outline:none;
+	overflow:hidden;
+	resize:none;
+	background-color:transparent;
+	border:5px solid transparent;
+	font-size:14px;
+	tab-size: 8;
+	-moz-tab-size: 8;
+	-webkit-tab-size: 8;
+}
+
+input{
+	color:#93a1a1;
+	outline:none;
+	background-color:transparent;
+	border:5px solid transparent;
+	font-size:14px;
+	left:5px;
+	position:relative;
+	font-weight: 300;
+}
+p {
+	position:absolute;
+	z-index:1;	
+	left:250px;
+	top:-10px;
+	font-size:18px;
+	font-family:"Trebuchet MS";
+	white-space:nowrap;
+}
+
+img{
+	left:-200px;
+	top:2px;
+	position:relative;
+}
+
+/*IE remove x button*/
+::-ms-clear {
+    display: none;
+}
+
+</style>
+</head>
+
+<body>
+<p><img src="../images/icons.PNG" width="65" height="15"/>Terminal - Bash - 110x30</p>
+<table>
+    <tr>
+        <td>
+        	<textarea readonly name=" " cols="90" rows="20" id="terminalText" onClick="focusField()"></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        	<!--The onfocus move the cursor to the end of the textfield, so always after the > -->
+        	<input autofocus id="commandField" type="text" size="100px" maxlength="100" value=">" onfocus="this.value = this.value" onkeypress="onEnter(event)" onKeyUp="keyUp()">
+        </td>
+    </tr>
+</table>
+
+
+
+<script>
+
+	//Get Date and Time
+	var d = new Date();
+	var weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+	var weekday = weekDays[d.getDay()];
+	var day = d.getDate();
+	var month = d.getMonth()+1;
+	var year = d.getFullYear();
+	var hour = d.getHours();
+	var minute = d.getMinutes();
+	var second = d.getSeconds();
+	var time = hour+":"+minute+":"+second+"  "+month+"/"+day+"/"+year;
+	
+	var terminalElement = document.getElementById("terminalText");
+	
+	//Initial terminal message on startup
+	terminalText.value = "Last Login: " + time + " on System Terminal\nExecute 'help' for a list of commands";
+	
+	//If click on the terminal focus on the command field
+	function focusField(){
+		document.getElementById("commandField").focus();
+	}
+	
+    function keyUp(){
+		//Cannot remove > at the beginning
+		var fieldLength = document.getElementById("commandField").value.length;
+		if (fieldLength === 0){
+			document.getElementById("commandField").value = ">";
+		}
+	}
+	
+	function onEnter(event){
+		var commandFieldElement = document.getElementById("commandField");
+		
+		if (event.which === 13){
+			var terminal = terminalElement.value;
+			var input = commandFieldElement.value;
+			input = input.substring(1);	//substring remove the > at the beginning
+			var splitter = input.split(" ");
+
+			command = (splitter[0]+"").toLowerCase();
+			parameter = (splitter[1]+"").toLowerCase();
+
+			//Print the command
+			terminal += "\n\n$ " + input +"\n";
+			
+			switch(command){
+				case "help":
+					switch (parameter){
+						case "list":
+							terminal += "List the available sections of the page";	
+							break;
+						case "explore":
+							terminal += "Explore a section in details\n\n";
+							terminal += "Options:\n";
+							terminal += "ABOUT\t\tA little something about myself\n";
+							terminal += "EXPERIENCE\tMy current and previous experiences working as an intern\n";
+							terminal += "PROJECT\t\tThe list of projects that I have worked on, and is currently working on\n";
+							terminal += "CONTACT\t\tList ways for you to get in touch with me";
+							break;
+						case "open":
+							terminal += "Open my social or personal website\n\n";
+							terminal += "Options:\n";
+							terminal += "WEBSITE\t\tOpen up my personal website in a new tab. Access my resume, projects' demo.\n";
+							terminal += "UNIVERSITY\tOpen up my university's website in a new tab\n";
+							terminal += "GITHUB\t\tOpen up my Github repositories in a new tab. My previous, and current \n\t\tprojects can be seen here\n";
+							terminal += "LINKEDIN\tOpen up my linkedin profile in a new tab\n";
+							terminal += "RESUME\t\tOpen a new tab with my resume in PDF format";
+							break;
+						case "time":
+							terminal += "Show the current time and date in the format (hh:mm:ss  mm/dd/yyyy)";
+							break;
+						case "clear":
+							terminal += "Clear the terminal screen of text";
+							break;
+						case "exit":
+							terminal += "Exit out of the terminal and redirect to the main page www.baotran.xyz";
+							break;
+						case "help":
+							terminal += "Show a list of the available commands";	
+							break;
+						case "undefined":	//If no argument is given
+							terminal += "For more information on a specific command, execute 'HELP COMMAND-NAME'\n\n";
+							terminal += "LIST\t\tList the available sections\n";
+							terminal += "EXPLORE\t\tExplore information if sepecified section\n";
+							terminal += "OPEN\t\tOpen a specified website in a new tab\n";
+							terminal += "TIME\t\tPrint out the current date and time\n";
+							terminal += "CLEAR\t\tClear the terminal screen\n";
+							terminal += "EXIT\t\tRedirect to the main page www.baotran.xyz\n";
+							terminal += "HELP\t\tList the available commands";
+							break;
+						default:	//If argument is incorrect
+							terminal += "'" + input + " " + parameter + "' command's parameter is not recognizable";
+					}
+					break;
+				case "list":
+					terminal += "about  experiences  projects  contact";
+					break;
+				case "explore":
+					switch (parameter){
+						case "about":
+							terminal += "I'm an undergraduate student at Westfield State University Class of 2017\n";
+							terminal += "I major in Computer Science, and Minor in Mathematics\n";
+							terminal += "I enjoy nature, soccer, and programming\n";
+							terminal += "I aspire to explore, and learn beyond my capabilities";
+							break;
+						case "experiences":
+							terminal += "<Center for Instructional Technology>\n";
+							terminal += "At CIT I was tasked with the construction of interactive learning objects.";
+							terminal += " Learning objects are animated HTML, JavaScript projects that are aimed to promote online learning."; 
+							terminal += " These objects are particularly useful to teachers with online classes, since they does a better job of transfering the knowledge to the learner.";
+							terminal += " Most of my projects were built in Adobe Edge Animate.";
+							terminal += " I utilized the tools and libaries available (HTML, JavaScript, and JQuery) to construct my most interesting ideas.";
+							break;
+						case "projects":
+							terminal += "<SquareScape>\n";
+							terminal += "SquareScape takes the concept of Pacman and simplifies it to a pixel on a 500 pixel radius.\n";
+							terminal += "The game leverages the user key presses for movements on a 2D plane.\n";
+							terminal += "It was built with Adobe Edge Animate, and coded in JavaScript.\n";
+							terminal += "<Digit>\n";
+							terminal += "Digit is a simple Android game that relies on the user's reflex in a time based environment.\n";
+							terminal += "It was built with Android Studio, and coded in Java.";
+							break;
+						case "contact":
+							terminal += "You can get in touch with me through:\n";
+							terminal += "Email: contact@baotran.xyz\n";
+							terminal += "Linkedin: www.linkedin.com/in/baoqtran\n";
+							terminal += "Thank you for your considerations. I'll get back to you as soon as possible.";
+							break;
+						case "undefined":
+							terminal += "'" + input + "' command missing an argument";
+							break;
+						default:
+							terminal += "'" + input + " " + parameter + "' command's parameter is not recognizable";	
+					}
+					break;
+				case "open":
+					switch (parameter){
+						case "website":
+							terminal += "Opened Bao Tran's personal website";
+							window.open("http://www.baotran.xyz");
+							break;
+						case "university":
+							terminal += "Opened Bao Tran's university";
+							window.open("http://www.westfield.ma.edu");
+							break;
+						case "github":
+							terminal += "Opened Bao Tran's Github page";
+							window.open("http://www.github.com/btran12");
+							break;
+						case "linkedin":
+							terminal += "Opened Bao Tran's Linkedin profile";
+							window.open("http://www.linkedin.com/in/baoqtran");
+							break;
+						case "resume":
+							terminal += "Opened Bao Tran's resume in PDF format";
+							window.open("http://www.baotran.xyz/resume/resume.pdf");
+							break;
+						case "undefined":
+							terminal += "'" + input + "' command missing an argument";
+							break;
+						default:
+							terminal += "'" + input + " " + parameter + "' command's parameter is not recognizable";
+					}
+					break;
+				case "time":
+					terminal += "The current time is: " + time;
+					break;
+				case "clear":
+					terminal = "";
+					break;
+				case "exit":
+					terminal += "Terminating session..."
+					//Go to the main site
+					setTimeout(function(){window.open("http://www.baotran.xyz", "_self");},2000);
+					break;
+				default:
+					terminal += "'" + input + "' is not a recognizable command";
+			}
+			
+			//Set the text
+			terminalElement.value = terminal;
+			
+			//Always see the most recent input
+			terminalElement.scrollTop = terminalElement.scrollHeight;
+			
+			//Clear the field
+			commandFieldElement.value = "";
+		}
+	}
+		
+</script>
+</body>
+</html>
