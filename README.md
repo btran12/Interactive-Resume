@@ -1,2 +1,2 @@
 # Interactive-Resume
-Text based UI of my resume
+Access demo at www.baotran.xyz/Terminal
